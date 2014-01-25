@@ -2,117 +2,117 @@ typedef struct _xptServer_t xptServer_t;
 
 typedef struct  
 {
-        uint8* buffer;
-        uint32 parserIndex;
-        uint32 bufferLimit; // current maximal size of buffer
-        uint32 bufferSize; // current effective size of buffer
+	uint8* buffer;
+	uint32 parserIndex;
+	uint32 bufferLimit; // current maximal size of buffer
+	uint32 bufferSize; // current effective size of buffer
 }xptPacketbuffer_t;
 
 typedef struct  
 {
-        uint8 merkleRoot[32];
-        uint32 seed;
+	uint8 merkleRoot[32];
+	uint32 seed;
 }xptWorkData_t;
 
 typedef struct  
 {
-        uint32 height;
-        uint32 version;
-        uint32 nTime;
-        uint32 nBits;
-        uint32 nBitsShare;
-        uint8 merkleRoot[32];
-        uint8 prevBlockHash[32];
-        // timeBias (difference between local time and server time)
-        uint32 timeBias;
-        // protoshares
-        uint32 nBirthdayA;
-        uint32 nBirthdayB;
-        // target
-        uint8 target[32];
-        uint8 targetShare[32];
-        // coinbase & tx info
-        uint16 coinBase1Size;
-        uint8 coinBase1[1024];
-        uint16 coinBase2Size;
-        uint8 coinBase2[1024];
-        uint32 txHashCount;
-        uint8 txHashes[32*4096]; // space for 4096 tx hashes
-        // time (set to current value of time(NULL) when we receive the work)
-        uint32 timeWork;
+	uint32 height;
+	uint32 version;
+	uint32 nTime;
+	uint32 nBits;
+	uint32 nBitsShare;
+	uint8 merkleRoot[32];
+	uint8 prevBlockHash[32];
+	// timeBias (difference between local time and server time)
+	uint32 timeBias;
+	// protoshares
+	uint32 nBirthdayA;
+	uint32 nBirthdayB;
+	// target
+	uint8 target[32];
+	uint8 targetShare[32];
+	// coinbase & tx info
+	uint16 coinBase1Size;
+	uint8 coinBase1[1024];
+	uint16 coinBase2Size;
+	uint8 coinBase2[1024];
+	uint32 txHashCount;
+	uint8 txHashes[32*4096]; // space for 4096 tx hashes
+	// time (set to current value of time(NULL) when we receive the work)
+	uint32 timeWork;
 }xptBlockWorkInfo_t;
 
 typedef struct _xptServer_t 
 {
-        SOCKET acceptSocket;
-        simpleList_t* list_connections;
-        xptPacketbuffer_t* sendBuffer; // shared buffer for sending data
-        // last known block height (for new block detection)
-        uint32 coinTypeBlockHeight[32];
-        // callbacks
-        bool (*xptCallback_generateWork)(xptServer_t* xptServer, uint32 numOfWorkEntries, uint32 coinTypeIndex, xptBlockWorkInfo_t* xptBlockWorkInfo, xptWorkData_t* xptWorkData);
-        void (*xptCallback_getBlockHeight)(xptServer_t* xptServer, uint32* coinTypeNum, uint32* blockHeightPerCoinType);
+	SOCKET acceptSocket;
+	simpleList_t* list_connections;
+	xptPacketbuffer_t* sendBuffer; // shared buffer for sending data
+	// last known block height (for new block detection)
+	uint32 coinTypeBlockHeight[32];
+	// callbacks
+	bool (*xptCallback_generateWork)(xptServer_t* xptServer, uint32 numOfWorkEntries, uint32 coinTypeIndex, xptBlockWorkInfo_t* xptBlockWorkInfo, xptWorkData_t* xptWorkData);
+	void (*xptCallback_getBlockHeight)(xptServer_t* xptServer, uint32* coinTypeNum, uint32* blockHeightPerCoinType);
 }xptServer_t;
 
 typedef struct  
 {
-        xptServer_t* xptServer;
-        SOCKET clientSocket;
-        bool disconnected;
-        // recv buffer
-        xptPacketbuffer_t* packetbuffer;
-        uint32 recvIndex;
-        uint32 recvSize;
-        // recv header info
-        uint32 opcode;
-        // authentication info
-        uint8 clientState;
-        char workerName[128];
-        char workerPass[128];
-        uint32 userId;
-        uint32 coinTypeIndex;
-        uint32 payloadNum;
+	xptServer_t* xptServer;
+	SOCKET clientSocket;
+	bool disconnected;
+	// recv buffer
+	xptPacketbuffer_t* packetbuffer;
+	uint32 recvIndex;
+	uint32 recvSize;
+	// recv header info
+	uint32 opcode;
+	// authentication info
+	uint8 clientState;
+	char workerName[128];
+	char workerPass[128];
+	uint32 userId;
+	uint32 coinTypeIndex;
+	uint32 payloadNum;
 
-        //uint32 size;
-        //// http auth
-        //bool useBasicHTTPAuth;
-        //char httpAuthUsername[64];
-        //char httpAuthPassword[64];
-        //// auto-diconnect
-        //uint32 connectionOpenedTimer;
+	//uint32 size;
+	//// http auth
+	//bool useBasicHTTPAuth;
+	//char httpAuthUsername[64];
+	//char httpAuthPassword[64];
+	//// auto-diconnect
+	//uint32 connectionOpenedTimer;
 }xptServerClient_t;
 
 // client states
-#define XPT_CLIENT_STATE_NEW                (0)
-#define XPT_CLIENT_STATE_LOGGED_IN        (1)
+#define XPT_CLIENT_STATE_NEW		(0)
+#define XPT_CLIENT_STATE_LOGGED_IN	(1)
 
 
 // list of known opcodes
 
-#define XPT_OPC_C_AUTH_REQ                1
-#define XPT_OPC_S_AUTH_ACK                2
-#define XPT_OPC_S_WORKDATA1                3
-#define XPT_OPC_C_SUBMIT_SHARE        4
-#define XPT_OPC_S_SHARE_ACK                5
-//#define XPT_OPC_C_SUBMIT_POW        6
-#define XPT_OPC_S_MESSAGE                7
-#define XPT_OPC_C_PING                        8
-#define XPT_OPC_S_PING                        8
+#define XPT_OPC_C_AUTH_REQ		1
+#define XPT_OPC_S_AUTH_ACK		2
+#define XPT_OPC_S_WORKDATA1		3
+#define XPT_OPC_C_SUBMIT_SHARE	4
+#define XPT_OPC_S_SHARE_ACK		5
+//#define XPT_OPC_C_SUBMIT_POW	6
+#define XPT_OPC_S_MESSAGE		7
+#define XPT_OPC_C_PING			8
+#define XPT_OPC_S_PING			8
 
 // list of error codes
 
-#define XPT_ERROR_NONE                                (0)
-#define XPT_ERROR_INVALID_LOGIN                (1)
-#define XPT_ERROR_INVALID_WORKLOAD        (2)
-#define XPT_ERROR_INVALID_COINTYPE        (3)
+#define XPT_ERROR_NONE				(0)
+#define XPT_ERROR_INVALID_LOGIN		(1)
+#define XPT_ERROR_INVALID_WORKLOAD	(2)
+#define XPT_ERROR_INVALID_COINTYPE	(3)
 
 // algorithms
 
-#define ALGORITHM_SHA256                1
-#define ALGORITHM_SCRYPT                2
-#define ALGORITHM_PRIME                        3
-#define ALGORITHM_PROTOSHARES        4
-#define ALGORITHM_METISCOIN                5
+#define ALGORITHM_SHA256		1
+#define ALGORITHM_SCRYPT		2
+#define ALGORITHM_PRIME			3
+#define ALGORITHM_PROTOSHARES	4
+#define ALGORITHM_METISCOIN		5
 
 // xpt general
 xptServer_t* xptServer_create(uint16 port);

@@ -28,7 +28,8 @@
  */
 
 #include"global.h"
-
+#define __align
+#define _rotl
 static inline uint32 be32dec(const void *pp)
 {
 	const uint8 *p = (uint8 const *)pp;
@@ -312,7 +313,7 @@ static inline void xor_salsa8_org(uint32 B[16], const uint32 Bx[16])
 static inline void xor_salsa8(uint32 B[16], const uint32 Bx[16])
 {
 	//uint32 x00,x01,x02,x03,x04,x05,x06,x07,x08,x09,x10,x11,x12,x13,x14,x15;
-	__declspec( align(32) ) uint32 x[16];
+	uint32 x[16];
 	//__m128i* f = (__m128i*)x;
 	int i;
 
@@ -415,7 +416,7 @@ static inline void xor_salsa8(uint32 B[16], const uint32 Bx[16])
 
 static inline void xor_salsa8_doubleround(uint32 B[16], uint32 Bx[16])
 {
-	__declspec( align(32) ) uint32 x[16];
+	uint32 x[16];
 	int i;
 	uint64* B64 = (uint64*)B;
 	uint64* Bx64 = (uint64*)Bx;

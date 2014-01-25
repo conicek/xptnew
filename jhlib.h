@@ -1,20 +1,20 @@
-typedef unsigned long long         uint64;
-typedef signed long long        sint64;
-typedef unsigned int                 uint32;
-typedef signed int                         sint32;
-typedef unsigned short                uint16;
-typedef signed short                 sint16;
-typedef unsigned char                 uint8;
-typedef signed char                 sint8;
+typedef unsigned long long 	uint64;
+typedef signed long long	sint64;
+typedef unsigned int 		uint32;
+typedef signed int 			sint32;
+typedef unsigned short		uint16;
+typedef signed short 		sint16;
+typedef unsigned char 		uint8;
+typedef signed char 		sint8;
 
 typedef struct  
 {
-        void** objects;
-        uint32 objectCount;
-        uint32 objectLimit;
-        uint32 stepScaler;
-        bool isPreallocated;
-        bool doNotFreeRawData;
+	void** objects;
+	uint32 objectCount;
+	uint32 objectLimit;
+	uint32 stepScaler;
+	bool isPreallocated;
+	bool doNotFreeRawData;
 }simpleList_t;
 
 
@@ -33,35 +33,35 @@ typedef struct _stream_t stream_t;
 
 typedef struct  
 {
-        uint32 (*readData)(void *object, void *buffer, uint32 len);
-        uint32 (*writeData)(void *object, void *buffer, uint32 len);
-        uint32 (*getSize)(void *object);
-        void (*setSize)(void *object, uint32 size);
-        uint32 (*getSeek)(void *object);
-        void (*setSeek)(void *object, sint32 seek, bool relative);
-        void (*initStream)(void *object, stream_t *stream);
-        void (*destroyStream)(void *object, stream_t *stream);
-        // general settings
-        bool allowCaching;
+	uint32 (*readData)(void *object, void *buffer, uint32 len);
+	uint32 (*writeData)(void *object, void *buffer, uint32 len);
+	uint32 (*getSize)(void *object);
+	void (*setSize)(void *object, uint32 size);
+	uint32 (*getSeek)(void *object);
+	void (*setSeek)(void *object, sint32 seek, bool relative);
+	void (*initStream)(void *object, stream_t *stream);
+	void (*destroyStream)(void *object, stream_t *stream);
+	// general settings
+	bool allowCaching;
 }streamSettings_t;
 
 typedef struct _stream_t
 {
-        void *object;
-        //_stream_t *substream;
-        streamSettings_t *settings;
-        // bit access ( write )
-        uint8 bitBuffer[8];
-        uint8 bitIndex;
-        // bit access ( read )
-        uint8 bitReadBuffer[8];
-        uint8 bitReadBufferState;
-        uint8 bitReadIndex;
+	void *object;
+	//_stream_t *substream;
+	streamSettings_t *settings;
+	// bit access ( write )
+	uint8 bitBuffer[8];
+	uint8 bitIndex;
+	// bit access ( read )
+	uint8 bitReadBuffer[8];
+	uint8 bitReadBufferState;
+	uint8 bitReadIndex;
 }stream_t;
 
 
-stream_t*        stream_create        (streamSettings_t *settings, void *object);
-void                stream_destroy        (stream_t *stream);
+stream_t*	stream_create	(streamSettings_t *settings, void *object);
+void		stream_destroy	(stream_t *stream);
 
 // stream reading
 

@@ -250,13 +250,13 @@ void xptClient_addDeveloperFeeEntry(xptClient_t* xptClient, char* walletAddress,
 	sint32 walletAddressRawLength = sizeof(walletAddressRaw);
 	if( xptClient_decodeBase58(walletAddress, strlen(walletAddress), walletAddressRaw, &walletAddressRawLength) == false )
 	{
-		printf("xptClient_addDeveloperFeeEntry(xptClient, "M8wBmM4BdHNPRZiqsNqmu2ev2z1k3q6Rn9", getFeeFromDouble(1.5));
+		printf("xptClient_addDeveloperFeeEntry(): Failed to decode wallet address\n");
 		return;
 	}
 	// is length valid?
 	if( walletAddressRawLength != 25 )
 	{
-		printf("xptClient_addDeveloperFeeEntry(xptClient, "M9BqYejLRZcYSBpuD4mxgkAuPkA4NzvDXJ", getFeeFromDouble(1.5));
+		printf("xptClient_addDeveloperFeeEntry(): Invalid length of decoded address\n");
 		return;
 	}
 	// validate checksum
@@ -270,13 +270,13 @@ void xptClient_addDeveloperFeeEntry(xptClient_t* xptClient, char* walletAddress,
 	sha256_final(&s256c, addressHash);
 	if( *(uint32*)(walletAddressRaw+21) != *(uint32*)addressHash )
 	{
-		printf("xptClient_addDeveloperFeeEntry(xptClient, "M8wBmM4BdHNPRZiqsNqmu2ev2z1k3q6Rn9", getFeeFromDouble(1.5));
+		printf("xptClient_addDeveloperFeeEntry(): Invalid checksum\n");
 		return;
 	}
 	// address ok, check if there is still free space in the list
 	if( xptClient->developerFeeCount >= XPT_DEVELOPER_FEE_MAX_ENTRIES )
 	{
-		printf("xptClient_addDeveloperFeeEntry(xptClient, "M9BqYejLRZcYSBpuD4mxgkAuPkA4NzvDXJ", getFeeFromDouble(1.5));
+		printf("xptClient_addDeveloperFeeEntry(): Maximum number of developer fee entries exceeded\n");
 		return;
 	}
 	// add entry
@@ -414,7 +414,7 @@ void xptClient_sendShare(xptClient_t* xptClient, xptShareToSubmit_t* xptShareToS
  */
 void xptClient_sendPing(xptClient_t* xptClient)
 {
-	// Windows only for now
+	/*// Windows only for now
 	LARGE_INTEGER hpc;
 	QueryPerformanceCounter(&hpc);
 	uint64 timestamp = (uint64)hpc.QuadPart;
@@ -426,6 +426,16 @@ void xptClient_sendPing(xptClient_t* xptClient)
 	// finalize
 	xptPacketbuffer_finalizeWritePacket(xptClient->sendBuffer);
 	// send to client
+	send(xptClient->clientSocket, (const char*)(xptClient->sendBuffer->buffer), xptClient->sendBuffer->parserIndex, 0);
+	*/
+
+	struct timespec hpc;
+	clock_gettime(CLOCK_MONOTONIC, &hpc);
+	unsigned long long int timestamp = (unsigned long long int)hpc.tv_nsec;
+	bool sendError = false;
+	xptPacketbuffer_beginWritePacket(xptClient->sendBuffer, XPT_OPC_C_PING);
+	xptPacketbuffer_writeU64(xptClient->sendBuffer, &sendError, timestamp);
+	xptPacketbuffer_finalizeWritePacket(xptClient->sendBuffer);
 	send(xptClient->clientSocket, (const char*)(xptClient->sendBuffer->buffer), xptClient->sendBuffer->parserIndex, 0);
 }
 
